@@ -8,4 +8,17 @@
     "Fashion",
     "Report"
   ]
+    "RepoUrl": "https://https:/github.com/WilliamW1979/FashionReport",
+    "DownloadCount": 9,
+    "LastUpdate": 1733673763789,
+    "DownloadLinkInstall": "https://github.com/WilliamW1979/FashionReport/releases/download/Beta/latest.zip",
+    "DownloadLinkUpdate": "https://github.com/WilliamW1979/FashionReport/releases/download/Beta/latest.zip",
+    "AssemblyVersion": "1.4.1.1",
+    "ApplicableVersion": "any",
+    "DalamudApiLevel": "11",
+    "Changelog": "- Language fixes",
+    "TestingAssemblyVersion": "1.3.0.4",
+    "DownloadLinkTesting": "https://github.com/WilliamW1979/FashionReport/releases/download/Beta/latest.zip",
+    "TestingDalamudApiLevel": "9",
+    "IconUrl": "https://s3.puni.sh/media/plugin/7/icon-bl3wub19h2u.png"}
 }
