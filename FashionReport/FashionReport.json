@@ -1,23 +1,16 @@
-{
-  "Author": "WillWolf76 & The Redheaded Witch",
-  "Name": "Fashion Report",
-  "Punchline": "Fashion Report with details!",
-  "Description": "Fashion Report with point calculation system.\nOnce you check in to see the fashion report for the week, the window will check your gear and tell you how many points you will earn based on what you are wearing.\nThis doesn't include the bonus calculations for Dyes ... YET (Future update planned)!\n\n/fr - opens up main window.\n/fashionreport - Main Window\n\nThis project was made possible by a woman who took the time to figure out the proper pointing system and organize the fashion report data for me. She is the heart of this project.\n\nFuture Updates:\nDye Calculation\nlist of all themed armor pieces with clickable links.\nAutomatic teleporting and moving to NPCs that sell pieces.",
-  "ApplicableVersion": "any",
-  "Tags": [
-    "Fashion",
-    "Report"
-  ]
-    "RepoUrl": "https:/github.com/WilliamW1979/FashionReport",
-    "DownloadCount": 9,
-    "LastUpdate": 1733673763789,
-    "DownloadLinkInstall": "https://github.com/WilliamW1979/FashionReport/releases/download/Beta/latest.zip",
-    "DownloadLinkUpdate": "https://github.com/WilliamW1979/FashionReport/releases/download/Beta/latest.zip",
-    "AssemblyVersion": "1.4.1.1",
-    "ApplicableVersion": "any",
-    "DalamudApiLevel": "11",
-    "Changelog": "- Language fixes",
-    "TestingAssemblyVersion": "1.3.0.4",
-    "DownloadLinkTesting": "https://github.com/WilliamW1979/FashionReport/releases/download/Beta/latest.zip",
-    "TestingDalamudApiLevel": "9"
-}
+	{
+		"Author": "WillWolf76 & The Redheaded Witch",
+		"Name": "Fashion Report",
+		"Punchline": "Fashion Report with details!",
+		"Description": "Fashion Report with point calculation system.\nOnce you check in to see the fashion report for the week, the window will check your gear and tell you how many points you will earn based on what you are wearing.\nThis doesn't include the bonus calculations for Dyes ... YET (Future update planned)!\n\n/fr - opens up main window.\n/fashionreport - Main Window\n\nThis project was made possible by a woman who took the time to figure out the proper pointing system and organize the fashion report data for me. She is the heart of this project.\n\nFuture Updates:\nDye Calculation\nlist of all themed armor pieces with clickable links.\nAutomatic teleporting and moving to NPCs that sell pieces.",
+		"Tags": ["Fashion", "Report"],
+		"InternalName": "FashionReport",
+		"AssemblyVersion": "0.0.0.3",
+		"RepoUrl": "https://https:/github.com/WilliamW1979/FashionReport",
+		"DownloadLinkInstall": "https://github.com/WilliamW1979/FashionReport/releases/download/Beta0.0.0.3/latest.zip",
+		"DownloadLinkTesting": "https://github.com/WilliamW1979/FashionReport/releases/download/Beta0.0.0.3/latest.zip",
+		"DownloadLinkUpdate": "https://github.com/WilliamW1979/FashionReport/releases/download/Beta0.0.0.3/latest.zip",
+		"ApplicableVersion": "any",
+		"DalamudApiLevel": 11,
+		"DownloadCount": 7,
+	}
