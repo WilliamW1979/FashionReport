@@ -56,6 +56,7 @@ public class MAINWINDOW : Window, IDisposable
         {
             TextCentered("Fashion Report Data not current!");
             TextCentered("Please update data by talking to Masked Rose at Gold Saucer.");
+            TextCentered("Choose: \"Confirm this week's challenge\"");
             return;
         }
 
@@ -140,6 +141,7 @@ public class MAINWINDOW : Window, IDisposable
 
     private uint GetSlotPoints(uint item, string slot, string data)
     {
+        if (item == 0) return 0;
         if (slot == "") return 10;
         if (data == "" && slot != "") return 5;
         string[] Gears = data.Split('|');
