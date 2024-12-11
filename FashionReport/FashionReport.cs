@@ -26,18 +26,17 @@ public sealed class FASHIONREPORT : IDalamudPlugin
     //    [PluginService] internal ISigScanner SigScanner { get; init; }
     //    [PluginService] internal ITargetManager TargetManager { get; init; }
 
-    public Configuration Configuration { get; init; }
+    public CONFIGURATION Configuration { get; init; }
 
     public readonly WindowSystem WindowSystem = new("Fashion Report");
-    private CONFIGWINDOW? ConfigWindow { get; init; }
+//    private CONFIGWINDOW? ConfigWindow { get; init; }
     private MAINWINDOW MainWindow { get; init; }
 
     public FASHIONREPORT()
     {
-        Configuration = Interface.GetPluginConfig() as Configuration ?? new Configuration();
+        Configuration = Interface.GetPluginConfig() as CONFIGURATION ?? new CONFIGURATION();
         MainWindow = new MAINWINDOW(this);
 
-//        WindowSystem.AddWindow(ConfigWindow);
         WindowSystem.AddWindow(MainWindow);
 
 #pragma warning disable CS8602
@@ -66,8 +65,6 @@ public sealed class FASHIONREPORT : IDalamudPlugin
     }
 
     private void DrawUI() => WindowSystem.Draw();
-#pragma warning disable CS8602
-    public void ToggleConfigUI() => ConfigWindow.Toggle();
-#pragma warning restore CS8602
+
     public void ToggleMainUI() => MainWindow.Toggle();
 }

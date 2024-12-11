@@ -1,10 +1,14 @@
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Interface.Windowing;
+using Dalamud.Memory;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Game;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 using ImGuiNET;
 using System;
 using System.Numerics;
+using System.Linq;
+using Serilog;
 
 namespace FashionReport.Windows;
 
@@ -12,89 +16,35 @@ public class MAINWINDOW : Window, IDisposable
 {
 //    private string? WolfPawImagePath;
     private FASHIONREPORT FashionReport;
-    private Configuration configuration;
+    private CONFIGURATION Configuration;
+    private bool bToggle;
     
-    private WEEK Week;
-
     public MAINWINDOW(FASHIONREPORT fashionReport) : base("Fashion Report", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
     {
+        this.FashionReport = fashionReport;
+        Configuration = FashionReport.Configuration;
+        bToggle = false;
+
         SizeConstraints = new WindowSizeConstraints
         {
             MinimumSize = new Vector2(375, 330),
             MaximumSize = new Vector2(float.MaxValue, float.MaxValue)
         };
-        this.FashionReport = fashionReport;
-        configuration = FashionReport.Configuration;
-        Week = new WEEK(FashionReport);
+
     }
 
     public void Dispose() { }
-    
-    public unsafe class Equip
+
+    void TextCentered(string text)
     {
-        public InventoryManager* inventoryManager;
-        public InventoryContainer* equipmentContainer;
-        public InventoryItem* equipmentInventoryItem;
-
-        public readonly uint[] uiid;
-        public readonly short[] shSlot;
-
-        public Equip()
-        {
-            inventoryManager = InventoryManager.Instance();
-            equipmentContainer = inventoryManager->GetInventoryContainer(InventoryType.EquippedItems);
-            equipmentInventoryItem = equipmentContainer->GetInventorySlot(0);
-            uiid = new uint[14];
-            shSlot = new short[14];
-        }
-
-        public void Check()
-        { 
-            for(int i = 0;i<14;i++)
-            {
-                equipmentInventoryItem = equipmentContainer->GetInventorySlot(i);
-                uiid[i] = equipmentInventoryItem->GetItemId();
-                shSlot[i] = equipmentInventoryItem->Slot;
-            }
-        }
-
-        public string ToString(int i)
-        {
-            if (i >= 14 || i < 0) return "";
-            return ("ID: " + (uiid[i] % 100000).ToString() + " | Slot: " + shSlot[i].ToString());
-        }
-    }
-    public unsafe uint GetEquipped(int x)
-    {
-        InventoryItem* equipmentInventoryItem;
-        if (x < 0 || x > 13) return 0;
-        equipmentInventoryItem = InventoryManager.Instance()->GetInventorySlot(InventoryType.EquippedItems, x);
-        return (equipmentInventoryItem->GetItemId() % 100000);
-    }
-
-    private uint CheckSlot(string Slot, uint item)
-    {
-        if (Week.Themes[Slot] == "")
-        {
-            if(item != 0)
-                return Week.GetMax(Slot);
-            else
-                return 0;
-        }
-        else
-        {
-            if (item == 0)
-                return 0;
-            else if (Week.IsGold(item, Week.Themes[Slot]))
-                return 10;
-            return 2;
-        }
+        ImGui.SetCursorPosX(((ImGui.GetColumnWidth() - ImGui.CalcTextSize(text).X) * 0.5f) + ImGui.GetColumnOffset());
+        ImGui.Text(text);
     }
 
     public unsafe override void Draw()
     {
-        Week.Check();
-        if (!Week.Current)
+        Check();
+        if (!Configuration.bCurrent)
         {
             TextCentered("Fashion Report Data not current!");
             TextCentered("Please update data by talking to Masked Rose at Gold Saucer.");
@@ -102,23 +52,15 @@ public class MAINWINDOW : Window, IDisposable
         }
 
         uint[] items = new uint[11];
-        uint[] points = new uint[11];
-        for (int i = 0; i < points.Length; i++)
+        for (int i = 0; i < items.Length; i++)
         {
             int t = i;
             if (t >= 1 && t < 4) t++;
             else if (t >= 4) t += 2;
             items[i] = GetEquipped(t);
         }
-
-        uint Points = 0;
-        foreach (ItemSlot slot in Enum.GetValues<ItemSlot>())
-            points[(int)slot] = CheckSlot(slot.ToString(), items[(int)slot]);
-        foreach (uint p in points)
-            Points += p;
-
         ImGui.SetWindowFontScale(2);
-        TextCentered(Week.WeeklyTheme);
+        TextCentered(Configuration.sWeeklyTheme);
         ImGui.SetWindowFontScale(1);
         ImGui.Separator();
         ImGui.Columns(4);
@@ -126,32 +68,55 @@ public class MAINWINDOW : Window, IDisposable
         ImGui.SetColumnWidth(1, 200);
         ImGui.SetColumnWidth(2, 30);
         ImGui.SetColumnWidth(3, 40);
-        ImGui.Text("Weapon"); // Weapon
-        ImGui.Text("Head"); // Head
-        ImGui.Text("Body"); // Body
-        ImGui.Text("Gloves"); // Gloves
-        ImGui.Text("Legs"); // Legs
-        ImGui.Text("Boots"); // Boots
-        ImGui.Text("Earrings"); // Earrings
-        ImGui.Text("Necklace"); // Necklace
-        ImGui.Text("Bracelet");// Bracelet
-        ImGui.Text("Right Ring");// R Ring
-        ImGui.Text("Left Ring");// L Ring
+        ImGui.Text("Weapon");
+        ImGui.Text("Head");
+        ImGui.Text("Body");
+        ImGui.Text("Gloves");
+        ImGui.Text("Legs");
+        ImGui.Text("Boots");
+        ImGui.Text("Earrings");
+        ImGui.Text("Necklace");
+        ImGui.Text("Bracelet");
+        ImGui.Text("Right Ring");
+        ImGui.Text("Left Ring");
         ImGui.NextColumn();
-        TextCentered(Week.Themes["Weapon"].Trim());
-        TextCentered(Week.Themes["Head"].Trim());
-        TextCentered(Week.Themes["Body"]);
-        TextCentered(Week.Themes["Gloves"]);
-        TextCentered(Week.Themes["Legs"]);
-        TextCentered(Week.Themes["Boots"]);
-        TextCentered(Week.Themes["Earrings"]);
-        TextCentered(Week.Themes["Necklace"]);
-        TextCentered(Week.Themes["Bracelet"]);
-        TextCentered(Week.Themes["RightRing"]);
-        TextCentered(Week.Themes["LeftRing"]);
+        TextCentered(Configuration.sWeapon);
+        TextCentered(Configuration.sHead);
+        TextCentered(Configuration.sBody);
+        TextCentered(Configuration.sGloves);
+        TextCentered(Configuration.sLegs);
+        TextCentered(Configuration.sBoots);
+        TextCentered(Configuration.sEarrings);
+        TextCentered(Configuration.sNecklace);
+        TextCentered(Configuration.sBracelet);
+        TextCentered(Configuration.sRightRing);
+        TextCentered(Configuration.sLeftRing);
         ImGui.NextColumn();
-        foreach (int p in points)
+
+        uint[] SlotPoints = new uint[11];
+
+        SlotPoints[0] = GetSlotPoints(GetEquipped(0), Configuration.sWeapon, Configuration.sWeaponData);
+        SlotPoints[1] = GetSlotPoints(GetEquipped(2), Configuration.sHead, Configuration.sHeadData);
+        SlotPoints[2] = GetSlotPoints(GetEquipped(3), Configuration.sBody, Configuration.sBodyData);
+        SlotPoints[3] = GetSlotPoints(GetEquipped(4), Configuration.sGloves, Configuration.sGlovesData);
+        SlotPoints[4] = GetSlotPoints(GetEquipped(6), Configuration.sLegs, Configuration.sLegsData);
+        SlotPoints[5] = GetSlotPoints(GetEquipped(7), Configuration.sBoots, Configuration.sBootsData);
+        SlotPoints[6] = GetSlotPoints(GetEquipped(8), Configuration.sEarrings, Configuration.sEarringsData);
+        SlotPoints[7] = GetSlotPoints(GetEquipped(9), Configuration.sNecklace, Configuration.sNecklaceData);
+        SlotPoints[8] = GetSlotPoints(GetEquipped(10), Configuration.sBracelet, Configuration.sBraceletData);
+        SlotPoints[9] = GetSlotPoints(GetEquipped(11), Configuration.sRightRing, Configuration.sRightRingData);
+        SlotPoints[10] = GetSlotPoints(GetEquipped(12), Configuration.sLeftRing, Configuration.sLeftRingData);
+
+        for (uint i = 6 ; i < SlotPoints.Length; i++)
+            if(SlotPoints[i] == 10)
+                SlotPoints[i] = 8; // Accessory
+
+        uint Points = 0;
+        foreach (uint p in SlotPoints)
+        {
             TextCentered(p.ToString());
+            Points += p;
+        }
         ImGui.NextColumn();
         for (int p = 0; p < 6; p++)
             ImGui.Text(" / 10");
@@ -164,9 +129,68 @@ public class MAINWINDOW : Window, IDisposable
         ImGui.SetWindowFontScale(1);
     }
 
-    void TextCentered(string text)
+    public unsafe uint GetEquipped(int x)
     {
-        ImGui.SetCursorPosX(((ImGui.GetColumnWidth() - ImGui.CalcTextSize(text).X) * 0.5f) + ImGui.GetColumnOffset());
-        ImGui.Text(text);
+        InventoryItem* equipmentInventoryItem;
+        if (x < 0 || x > 13) return 0;
+        equipmentInventoryItem = InventoryManager.Instance()->GetInventorySlot(InventoryType.EquippedItems, x);
+        return (equipmentInventoryItem->GetItemId() % 100000);
+    }
+
+    private uint GetSlotPoints(uint item, string slot, string data)
+    {
+        if (slot == "") return 10;
+        if (data == "" && slot != "") return 5;
+        string[] Gears = data.Split('|');
+        foreach (string Gear in Gears)
+        {
+            if (item == uint.Parse(Gear))
+                return 10;
+        }
+        return 2;
+    }
+
+    public unsafe void Check()
+    {
+        Configuration.bCurrent = (WeeklyReset(DateTime.Now) == WeeklyReset(Configuration.dtLastChecked));
+#pragma warning disable CS8602
+        AtkUnitBase* addon = (AtkUnitBase*)FashionReport.GameGui.GetAddonByName("FashionCheck");
+#pragma warning restore CS8602
+        if ((nint)addon != IntPtr.Zero)
+        { 
+            if ((((AtkUnitBase*)addon)->RootNode != null && ((AtkUnitBase*)addon)->RootNode->IsVisible()) && bToggle == false)
+            {
+                if (Configuration.bCurrent == false) Configuration.Reset();
+                Configuration.dtLastChecked = DateTime.Now;
+                Configuration.sWeeklyTheme = MemoryHelper.ReadSeStringNullTerminated((nint)addon->AtkValues[0].String).TextValue;
+                Configuration.sWeapon = MemoryHelper.ReadSeStringNullTerminated((nint)addon->AtkValues[2].String).TextValue;
+                Configuration.sHead = MemoryHelper.ReadSeStringNullTerminated((nint)addon->AtkValues[13].String).TextValue;
+                Configuration.sBody = MemoryHelper.ReadSeStringNullTerminated((nint)addon->AtkValues[24].String).TextValue;
+                Configuration.sGloves = MemoryHelper.ReadSeStringNullTerminated((nint)addon->AtkValues[35].String).TextValue;
+                Configuration.sLegs = MemoryHelper.ReadSeStringNullTerminated((nint)addon->AtkValues[46].String).TextValue;
+                Configuration.sBoots = MemoryHelper.ReadSeStringNullTerminated((nint)addon->AtkValues[57].String).TextValue;
+                Configuration.sEarrings = MemoryHelper.ReadSeStringNullTerminated((nint)addon->AtkValues[68].String).TextValue;
+                Configuration.sNecklace = MemoryHelper.ReadSeStringNullTerminated((nint)addon->AtkValues[79].String).TextValue;
+                Configuration.sBracelet = MemoryHelper.ReadSeStringNullTerminated((nint)addon->AtkValues[90].String).TextValue;
+                Configuration.sRightRing = MemoryHelper.ReadSeStringNullTerminated((nint)addon->AtkValues[101].String).TextValue;
+                Configuration.sLeftRing = MemoryHelper.ReadSeStringNullTerminated((nint)addon->AtkValues[112].String).TextValue;
+                Configuration.sChancesLeft = MemoryHelper.ReadSeStringNullTerminated((nint)addon->AtkValues[122].String).TextValue;
+                Configuration.sHighScore = MemoryHelper.ReadSeStringNullTerminated((nint)addon->AtkValues[123].String).TextValue;
+                Configuration.Populate();
+                Configuration.Save();
+                bToggle = true;
+            }
+            else if (!(((AtkUnitBase*)addon)->RootNode != null && ((AtkUnitBase*)addon)->RootNode->IsVisible()))
+                bToggle = false;
+        }
+    }
+
+    private DateTime WeeklyReset(DateTime time)
+    {
+        time = time.ToUniversalTime().AddHours(-8);
+        int offset = ((int)time.DayOfWeek) - ((int)DayOfWeek.Tuesday);
+        if (offset < 0) offset += 7;
+        time = time.AddDays(-offset);
+        return new DateTime(time.Year, time.Month, time.Day, 0, 0, 0);
     }
 }

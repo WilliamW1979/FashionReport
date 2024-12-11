@@ -26,46 +26,6 @@ namespace FashionReport
     {
         FASHIONREPORT FashionReport;
 
-        public DateTime LastChecked;
-        public SortedList<string, string> Themes; // SLOT, THEME
-        public SortedList<string, string> ThemeDetails; // Theme, int data to be parsed!
-        public string WeeklyTheme;
-        public bool Current;
-
-        public WEEK(FASHIONREPORT fr)
-        {
-            Current = false;
-            FashionReport = fr;
-            WeeklyTheme = "";
-            LastChecked = new DateTime(2000,01,01,0,0,0);
-            Themes = new SortedList<string, string>();
-            ThemeDetails = new SortedList<string, string>();
-            foreach (FashionReport.ItemSlot slot in Enum.GetValues<ItemSlot>())
-                Themes[slot.ToString()] = "";
-            Load();
-        }
-
-        public bool IsGold(uint item, string theme)
-        {
-            string data = ThemeDetails[theme];
-            if (data == "") return false;
-            string[] Gears = data.Split('|');
-            foreach (string Gear in Gears)
-            {
-                if (item == uint.Parse(Gear))
-                    return true;
-            }
-            return false;
-        }
-
-        private DateTime WeeklyReset(DateTime time)
-        {
-            time = time.ToUniversalTime().AddHours(-8);
-            int offset = ((int)time.DayOfWeek) - ((int)DayOfWeek.Tuesday);
-            if (offset < 0) offset += 7;
-            time = time.AddDays(-offset);
-            return new DateTime(time.Year, time.Month, time.Day, 0, 0, 0);
-        }
 
         public void Log(string message)
         {
@@ -74,23 +34,8 @@ namespace FashionReport
             sw.Close();
         }
 
-        public unsafe void Check()
-        {
-            Current = (WeeklyReset(DateTime.Now) == WeeklyReset(LastChecked));
-#pragma warning disable CS8602
-            AtkUnitBase* addon = (AtkUnitBase*)FashionReport.GameGui.GetAddonByName("FashionCheck");
-#pragma warning restore CS8602
-            if ((nint)addon != IntPtr.Zero)
-                if (((AtkUnitBase*)addon)->RootNode != null && ((AtkUnitBase*)addon)->RootNode->IsVisible())
-                {
-                    LastChecked = DateTime.Now;
-                    WeeklyTheme = MemoryHelper.ReadSeStringNullTerminated((nint)addon->AtkValues[0].String).TextValue;
-                    foreach (FashionReport.ItemSlot slot in Enum.GetValues<ItemSlot>())
-                        Themes[slot.ToString()] = MemoryHelper.ReadSeStringNullTerminated((nint)addon->AtkValues[((int)slot * 11) + 2].String).TextValue;
-                    Save();
-                }
-        }
 
+/*
         private void Load()
         {
             if (!File.Exists("WeeklyData.wgw"))
@@ -174,5 +119,6 @@ namespace FashionReport
                 default: return 0;
             }
         }
+*/
     }
 }
