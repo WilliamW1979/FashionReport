@@ -1,15 +1,17 @@
-{
-    "Author": "WillWolf76 & The Redheaded Witch",
-    "Name": "Fashion Report",
-    "Punchline": "Fashion Report with details!",
-    "Description": "Fashion Report with point calculation system.\nOnce you check in to see the fashion report for the week, the window will check your gear and tell you how many points you will earn based on what you are wearing.\nThis doesn't include the bonus calculations for Dyes ... YET (Future update planned)!\n\n/fr - opens up main window.\n/fashionreport - Main Window\n\nThis project was made possible by a woman who took the time to figure out the proper pointing system and organize the fashion report data for me. She is the heart of this project.\n\nFuture Updates:\nDye Calculation\nlist of all themed armor pieces with clickable links.\nAutomatic teleporting and moving to NPCs that sell pieces.",
-    "Tags": [ "Fashion", "Report" ],
-    "InternalName": "FashionReport",
-    "AssemblyVersion": "0.0.0.4",
-    "RepoUrl": "https://https:/github.com/WilliamW1979/FashionReport",
-    "ApplicableVersion": "any",
-    "DalamudApiLevel": 11,
-    "DpwnloadCount": 7,
-    "DownloadLinkInstall": "https://github.com/WilliamW1979/FashionReport/releases/download/Beta0.0.0.4/latest.zip",
-    "IconUrl": "https://github.com/WilliamW1979/FashionReport/raw/master/Data/Wolf%20Paw.png"
-}
+	{
+		"Author": "WillWolf76 & The Redheaded Witch",
+		"Name": "Fashion Report",
+		"Punchline": "Fashion Report with details!",
+		"Description": "Fashion Report with point calculation system.\nOnce you check in to see the fashion report for the week, the window will check your gear and tell you how many points you will earn based on what you are wearing.\nThis doesn't include the bonus calculations for Dyes ... YET (Future update planned)!\n\n/fr - opens up main window.\n/fashionreport - Main Window\n\nThis project was made possible by a woman who took the time to figure out the proper pointing system and organize the fashion report data for me. She is the heart of this project.\n\nFuture Updates:\nDye Calculation\nlist of all themed armor pieces with clickable links.\nAutomatic teleporting and moving to NPCs that sell pieces.",
+        "Tags": [ "Fashion", "Report" ],
+		"InternalName": "FashionReport",
+        "AssemblyVersion": "0.0.0.5",
+		"RepoUrl": "https://https:/github.com/WilliamW1979/FashionReport",
+		"DownloadLinkInstall": "https://github.com/WilliamW1979/FashionReport/releases/download/Beta0.0.0.5/latest.zip",
+		"DownloadLinkTesting": "https://github.com/WilliamW1979/FashionReport/releases/download/Beta0.0.0.5/latest.zip",
+		"DownloadLinkUpdate": "https://github.com/WilliamW1979/FashionReport/releases/download/Beta0.0.0.5/latest.zip",
+		"ApplicableVersion": "any",
+		"DalamudApiLevel": 11,
+        "DownloadLinkInstall": "https://github.com/WilliamW1979/FashionReport/releases/download/Beta0.0.0.5/latest.zip",
+        "IconUrl": "https://github.com/WilliamW1979/FashionReport/raw/master/Data/Wolf%20Paw.png"
+	}

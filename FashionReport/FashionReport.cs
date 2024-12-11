@@ -37,6 +37,7 @@ public sealed class FASHIONREPORT : IDalamudPlugin
         Configuration = Interface.GetPluginConfig() as CONFIGURATION ?? new CONFIGURATION();
         MainWindow = new MAINWINDOW(this);
 
+//        WindowSystem.AddWindow(ConfigWindow);
         WindowSystem.AddWindow(MainWindow);
 
 #pragma warning disable CS8602
@@ -45,6 +46,12 @@ public sealed class FASHIONREPORT : IDalamudPlugin
 #pragma warning restore CS8602
 
         Interface.UiBuilder.Draw += DrawUI;
+
+        // This adds a button to the plugin installer entry of this plugin which allows
+        // to toggle the display status of the configuration ui
+//        Interface.UiBuilder.OpenConfigUi += ToggleConfigUI;
+
+        // Adds another button that is doing the same but for the main ui of the plugin
         Interface.UiBuilder.OpenMainUi += ToggleMainUI;
     }
 

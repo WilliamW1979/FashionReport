@@ -79,16 +79,8 @@ public class CONFIGURATION : IPluginConfiguration
             sLeftRingData = GetData(sLeftRing);
     }
 
-    public void Log(string message)
-    {
-        StreamWriter sw = new StreamWriter("D:\\C\\FashionReport\\FashionReport\\bin\\x64\\Debug\\log.txt", true);
-        sw.WriteLine(message);
-        sw.Close();
-    }
-
     public string GetData(string sTheme)
     {
-        Log("Made it!");
         MySqlConnection conn = new MySqlConnection("PORT=19137;SERVER=srankhunter-srankhunter.f.aivencloud.com;DATABASE=FashionReport;UID=FRMod;PASSWORD=jgv90jRnioasDfioFhnbweo;");
         conn.Open();
         MySqlCommand cmd = new MySqlCommand();
@@ -104,7 +96,6 @@ public class CONFIGURATION : IPluginConfiguration
         }
         reader.Close();
         conn.Close();
-        Log(data);
         return data;
     }
 

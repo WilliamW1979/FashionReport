@@ -40,6 +40,14 @@ public class MAINWINDOW : Window, IDisposable
         ImGui.SetCursorPosX(((ImGui.GetColumnWidth() - ImGui.CalcTextSize(text).X) * 0.5f) + ImGui.GetColumnOffset());
         ImGui.Text(text);
     }
+    
+    public unsafe uint GetEquipped(int x)
+    {
+        InventoryItem* equipmentInventoryItem;
+        if (x < 0 || x > 13) return 0;
+        equipmentInventoryItem = InventoryManager.Instance()->GetInventorySlot(InventoryType.EquippedItems, x);
+        return (equipmentInventoryItem->GetItemId() % 100000);
+    }
 
     public unsafe override void Draw()
     {
@@ -59,6 +67,7 @@ public class MAINWINDOW : Window, IDisposable
             else if (t >= 4) t += 2;
             items[i] = GetEquipped(t);
         }
+
         ImGui.SetWindowFontScale(2);
         TextCentered(Configuration.sWeeklyTheme);
         ImGui.SetWindowFontScale(1);
@@ -109,7 +118,7 @@ public class MAINWINDOW : Window, IDisposable
 
         for (uint i = 6 ; i < SlotPoints.Length; i++)
             if(SlotPoints[i] == 10)
-                SlotPoints[i] = 8; // Accessory
+                SlotPoints[i] = 8;
 
         uint Points = 0;
         foreach (uint p in SlotPoints)
@@ -127,14 +136,6 @@ public class MAINWINDOW : Window, IDisposable
         ImGui.SetWindowFontScale(4);
         TextCentered(Points.ToString() + " points");
         ImGui.SetWindowFontScale(1);
-    }
-
-    public unsafe uint GetEquipped(int x)
-    {
-        InventoryItem* equipmentInventoryItem;
-        if (x < 0 || x > 13) return 0;
-        equipmentInventoryItem = InventoryManager.Instance()->GetInventorySlot(InventoryType.EquippedItems, x);
-        return (equipmentInventoryItem->GetItemId() % 100000);
     }
 
     private uint GetSlotPoints(uint item, string slot, string data)
