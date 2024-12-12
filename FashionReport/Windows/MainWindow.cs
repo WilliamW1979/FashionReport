@@ -1,14 +1,10 @@
-using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Interface.Windowing;
 using Dalamud.Memory;
-using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using ImGuiNET;
 using System;
 using System.Numerics;
-using System.Linq;
-using Serilog;
 
 namespace FashionReport.Windows;
 
@@ -57,6 +53,8 @@ public class MAINWINDOW : Window, IDisposable
             TextCentered("Fashion Report Data not current!");
             TextCentered("Please update data by talking to Masked Rose at Gold Saucer.");
             TextCentered("Choose: \"Confirm this week's challenge\"");
+            ImGui.NewLine();
+            TextCentered("This loads the data for the week.");
             return;
         }
 

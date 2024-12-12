@@ -1,12 +1,9 @@
-using Dalamud.Game;
-using Dalamud.Game.ClientState.Objects;
 using Dalamud.Game.Command;
 using Dalamud.Interface.Windowing;
 using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using FashionReport.Windows;
-using System.IO;
 
 namespace FashionReport;
 

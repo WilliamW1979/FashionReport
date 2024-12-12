@@ -1,13 +1,7 @@
 using Dalamud.Configuration;
-using FashionReport.Windows;
-using ImGuiNET;
-using Lumina.Excel.Sheets;
 using MySql.Data.MySqlClient;
 using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.IO;
-using static FFXIVClientStructs.ThisAssembly.Git;
 
 namespace FashionReport;
 
@@ -81,7 +75,8 @@ public class CONFIGURATION : IPluginConfiguration
 
     public string GetData(string sTheme)
     {
-        MySqlConnection conn = new MySqlConnection("PORT=19137;SERVER=srankhunter-srankhunter.f.aivencloud.com;DATABASE=FashionReport;UID=FRMod;PASSWORD=jgv90jRnioasDfioFhnbweo;");
+        string server = ConfigurationManager.ConnectionStrings["<MySQL String>"].ConnectionString;
+        MySqlConnection conn = new MySqlConnection(server);
         conn.Open();
         MySqlCommand cmd = new MySqlCommand();
         cmd.Connection = conn;
