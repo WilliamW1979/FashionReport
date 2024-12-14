@@ -1,6 +1,8 @@
 using Dalamud.Configuration;
+using Lumina.Excel.Sheets;
 using MySql.Data.MySqlClient;
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 
 namespace FashionReport;
@@ -9,6 +11,8 @@ namespace FashionReport;
 public class CONFIGURATION : IPluginConfiguration
 {
     public int Version { get; set; } = 1;
+
+    public List<Item> lItems = new List<Item>();
 
     public DateTime dtLastChecked = new DateTime(2000,1,1,0,0,0);
     public string sWeeklyTheme = "";
@@ -85,16 +89,15 @@ public class CONFIGURATION : IPluginConfiguration
         MySqlDataReader reader = cmd.ExecuteReader();
         string? data = "";
         if (reader.Read())
-        {
-            data = reader["Gears"].ToString();
-            if (data == null) data = "";
-        }
+            if((data = reader["Gears"].ToString()) == null)
+                data = "";
         reader.Close();
         conn.Close();
         return data;
     }
 
     public void Save() => FASHIONREPORT.Interface.SavePluginConfig(this);
+
     public static CONFIGURATION Load()
     {
         if (FASHIONREPORT.Interface.GetPluginConfig() is CONFIGURATION Configuration)

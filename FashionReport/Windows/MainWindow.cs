@@ -3,7 +3,10 @@ using Dalamud.Memory;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using ImGuiNET;
+using Lumina.Excel.Sheets;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 
 namespace FashionReport.Windows;
@@ -14,36 +17,28 @@ public class MAINWINDOW : Window, IDisposable
     private FASHIONREPORT FashionReport;
     private CONFIGURATION Configuration;
     private bool bToggle;
-    
+    private STATE eState;
+    private uint iSlot;
+    private string sCurrentTheme;
+    private string sCurrentThemeData;
+
     public MAINWINDOW(FASHIONREPORT fashionReport) : base("Fashion Report", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
     {
         this.FashionReport = fashionReport;
         Configuration = FashionReport.Configuration;
         bToggle = false;
+        sCurrentTheme = "";
+        sCurrentThemeData = "";
+        eState = STATE.Main;
 
         SizeConstraints = new WindowSizeConstraints
         {
             MinimumSize = new Vector2(375, 330),
             MaximumSize = new Vector2(float.MaxValue, float.MaxValue)
         };
-
     }
 
-    public void Dispose() { }
-
-    void TextCentered(string text)
-    {
-        ImGui.SetCursorPosX(((ImGui.GetColumnWidth() - ImGui.CalcTextSize(text).X) * 0.5f) + ImGui.GetColumnOffset());
-        ImGui.Text(text);
-    }
-    
-    public unsafe uint GetEquipped(int x)
-    {
-        InventoryItem* equipmentInventoryItem;
-        if (x < 0 || x > 13) return 0;
-        equipmentInventoryItem = InventoryManager.Instance()->GetInventorySlot(InventoryType.EquippedItems, x);
-        return (equipmentInventoryItem->GetItemId() % 100000);
-    }
+    public void Dispose() {}
 
     public unsafe override void Draw()
     {
@@ -57,7 +52,39 @@ public class MAINWINDOW : Window, IDisposable
             TextCentered("This loads the data for the week.");
             return;
         }
+        else if (eState == STATE.Main && Configuration.bCurrent)
+            MainDraw();
+        else if (eState == STATE.Slot && Configuration.bCurrent)
+            SlotDraw();
+    }
 
+    public void SlotDraw()
+    {
+        if (ImGui.ArrowButton("Back", ImGuiDir.Left))
+        {
+            iSlot = 0;
+            sCurrentTheme = "";
+            sCurrentThemeData = "";
+            eState = STATE.Main;
+        }
+        ImGui.SameLine();
+        ImGui.Text("Go Back");
+        ImGui.Separator();
+        ImGui.SetWindowFontScale(2);
+        TextCentered(sCurrentTheme);
+        ImGui.SetWindowFontScale(1);
+        ImGui.Separator();
+        string[] items = sCurrentThemeData.Split('|');
+        foreach (string item in items)
+        {
+            Item iItem = FashionReport.GearManager.GetGearItem(uint.Parse(item));
+            if (iItem.RowId > 0 && iItem.EquipSlotCategory.RowId == iSlot) // TextCentered(iItem.Name.ToString());
+                FashionReport.GearManager.DrawItem(iItem);
+        }
+    }
+
+    public void MainDraw()
+    { 
         uint[] items = new uint[11];
         for (int i = 0; i < items.Length; i++)
         {
@@ -88,17 +115,19 @@ public class MAINWINDOW : Window, IDisposable
         ImGui.Text("Right Ring");
         ImGui.Text("Left Ring");
         ImGui.NextColumn();
-        TextCentered(Configuration.sWeapon);
-        TextCentered(Configuration.sHead);
-        TextCentered(Configuration.sBody);
-        TextCentered(Configuration.sGloves);
-        TextCentered(Configuration.sLegs);
-        TextCentered(Configuration.sBoots);
-        TextCentered(Configuration.sEarrings);
-        TextCentered(Configuration.sNecklace);
-        TextCentered(Configuration.sBracelet);
-        TextCentered(Configuration.sRightRing);
-        TextCentered(Configuration.sLeftRing);
+
+        if (Configuration.sWeapon == "") ImGui.NewLine(); else ButtonTheme(Configuration.sWeapon, Configuration.sWeaponData, 1);
+        if (Configuration.sHead == "") ImGui.NewLine(); else ButtonTheme(Configuration.sHead, Configuration.sHeadData, 3);
+        if (Configuration.sBody == "") ImGui.NewLine(); else ButtonTheme(Configuration.sBody, Configuration.sBodyData, 4);
+        if (Configuration.sGloves == "") ImGui.NewLine(); else ButtonTheme(Configuration.sGloves, Configuration.sGlovesData, 6);
+        if (Configuration.sLegs == "") ImGui.NewLine(); else ButtonTheme(Configuration.sLegs, Configuration.sLegsData, 7);
+        if (Configuration.sBoots == "") ImGui.NewLine(); else ButtonTheme(Configuration.sBoots, Configuration.sBootsData, 8);
+        if (Configuration.sEarrings == "") ImGui.NewLine(); else ButtonTheme(Configuration.sEarrings, Configuration.sEarringsData, 9);
+        if (Configuration.sNecklace == "") ImGui.NewLine(); else ButtonTheme(Configuration.sNecklace, Configuration.sNecklaceData, 10);
+        if (Configuration.sBracelet == "") ImGui.NewLine(); else ButtonTheme(Configuration.sBracelet, Configuration.sBraceletData, 11);
+        if (Configuration.sRightRing == "") ImGui.NewLine(); else ButtonTheme(Configuration.sRightRing, Configuration.sRightRingData, 12);
+        if (Configuration.sLeftRing == "") ImGui.NewLine(); else ButtonTheme(Configuration.sLeftRing, Configuration.sLeftRingData, 13);
+
         ImGui.NextColumn();
 
         uint[] SlotPoints = new uint[11];
@@ -137,6 +166,64 @@ public class MAINWINDOW : Window, IDisposable
         ImGui.SetWindowFontScale(1);
     }
 
+    void ButtonText(string sText)
+    {
+        Vector2 vTextSize = ImGui.CalcTextSize(sText);
+        float fButtonWidth = vTextSize.X + ImGui.GetStyle().FramePadding.X * 2.0f;
+        float fColunWidth = ImGui.GetContentRegionAvail().X;
+        float fOffsetX = (fColunWidth - fButtonWidth) / 2.0f;
+        ImGui.SetCursorPosX(ImGui.GetCursorPosX() + fOffsetX);
+        if (ImGui.InvisibleButton("##" + sText, vTextSize))
+        {
+        }
+        Vector2 vButtonPos = ImGui.GetItemRectMin();
+        ImDrawListPtr drawlist = ImGui.GetWindowDrawList();
+        uint iBlueColor = ImGui.ColorConvertFloat4ToU32(new Vector4(0.0f, 0.5f, 1.0f, 1.0f));
+
+        Vector2 vUnderlineStart = new Vector2(vButtonPos.X, vButtonPos.Y + vTextSize.Y + 1); // Slight offset below the text
+        Vector2 vUnderlineEnd = new Vector2(vButtonPos.X + vTextSize.X, vButtonPos.Y + vTextSize.Y + 1);
+        drawlist.AddLine(vUnderlineStart, vUnderlineEnd, iBlueColor, 1.0f); // Line thickness of 1.0f
+        ImGui.GetWindowDrawList().AddText(vButtonPos, ImGui.ColorConvertFloat4ToU32(new Vector4(0.0f, 0.5f, 1.0f, 1.0f)), sText);
+    }
+
+    void ButtonTheme(string sTheme, string sThemeData, uint uiSlot)
+    {
+        Vector2 vTextSize = ImGui.CalcTextSize(sTheme);
+        float fButtonWidth = vTextSize.X + ImGui.GetStyle().FramePadding.X * 2.0f;
+        float fColunWidth = ImGui.GetContentRegionAvail().X;
+        float fOffsetX = (fColunWidth - fButtonWidth) / 2.0f;
+        ImGui.SetCursorPosX(ImGui.GetCursorPosX() + fOffsetX);
+        if (ImGui.InvisibleButton("##" + sTheme, vTextSize))
+        {
+            eState = STATE.Slot;
+            sCurrentTheme = sTheme;
+            sCurrentThemeData = sThemeData;
+            iSlot = uiSlot;
+        }   
+        Vector2 vButtonPos = ImGui.GetItemRectMin();
+        ImDrawListPtr drawlist = ImGui.GetWindowDrawList();
+        uint iBlueColor = ImGui.ColorConvertFloat4ToU32(new Vector4(0.0f, 0.5f, 1.0f, 1.0f));
+
+        Vector2 vUnderlineStart = new Vector2(vButtonPos.X, vButtonPos.Y + vTextSize.Y + 1); // Slight offset below the text
+        Vector2 vUnderlineEnd = new Vector2(vButtonPos.X + vTextSize.X, vButtonPos.Y + vTextSize.Y + 1);
+        drawlist.AddLine(vUnderlineStart, vUnderlineEnd, iBlueColor, 1.0f); // Line thickness of 1.0f
+        ImGui.GetWindowDrawList().AddText(vButtonPos, ImGui.ColorConvertFloat4ToU32(new Vector4(0.0f, 0.5f, 1.0f, 1.0f)), sTheme);
+    }
+
+    void TextCentered(string text)
+    {
+        ImGui.SetCursorPosX(((ImGui.GetColumnWidth() - ImGui.CalcTextSize(text).X) * 0.5f) + ImGui.GetColumnOffset());
+        ImGui.Text(text);
+    }
+
+    public unsafe uint GetEquipped(int x)
+    {
+        InventoryItem* equipmentInventoryItem;
+        if (x < 0 || x > 13) return 0;
+        equipmentInventoryItem = InventoryManager.Instance()->GetInventorySlot(InventoryType.EquippedItems, x);
+        return (equipmentInventoryItem->GetItemId() % 100000);
+    }
+
     private uint GetSlotPoints(uint item, string slot, string data)
     {
         if (item == 0) return 0;
@@ -155,7 +242,7 @@ public class MAINWINDOW : Window, IDisposable
     {
         Configuration.bCurrent = (WeeklyReset(DateTime.Now) == WeeklyReset(Configuration.dtLastChecked));
 #pragma warning disable CS8602
-        AtkUnitBase* addon = (AtkUnitBase*)FashionReport.GameGui.GetAddonByName("FashionCheck");
+        AtkUnitBase* addon = (AtkUnitBase*)FASHIONREPORT.GameGui.GetAddonByName("FashionCheck");
 #pragma warning restore CS8602
         if ((nint)addon != IntPtr.Zero)
         { 
@@ -194,4 +281,6 @@ public class MAINWINDOW : Window, IDisposable
         time = time.AddDays(-offset);
         return new DateTime(time.Year, time.Month, time.Day, 0, 0, 0);
     }
+
+    private enum STATE { Main, Slot };
 }

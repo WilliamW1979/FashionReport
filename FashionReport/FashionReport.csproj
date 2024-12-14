@@ -10,8 +10,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Log.cs" />
     <Compile Remove="Week.cs" />
     <Compile Remove="Windows\ConfigWindow.cs" />
+    <Compile Remove="Windows\SlotWindow.cs" />
   </ItemGroup>
 
   <ItemGroup>
