@@ -9,7 +9,7 @@ You will get max points in a slot that isn't themed wearing something.
 You will get max points if you wear a themed item. (Gold Coin Symbol)
 You will only get 2 points if you wear something and it doesn't match the theme. (Gray participation stamp)
 
-Dyes are BONUS POINTS and are worth 1 point right colot, 2 points right shade.
+Dyes are BONUS POINTS and are worth 1 point right color, 2 points right shade.
 
 Based on this system system, it is very simple to know what your points will be prior to judging if you know the themed slots in advance. Luckily we know most of them thanks to the historical records from pervious weeks (links will be below) . Most of her data came from the reddit group that does dyes to the fashion report every Friday morning, though she did want me to give respect to Meoni because his videos were able to correct the tons of mistakes that were made by the reddit group without spending hours combing through reddit pages to figure out what they were trying to say. (Typoes, completely wrong information sometimes, etc...).
 
