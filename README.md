@@ -11,6 +11,7 @@ This plugin will Calculate your points based on what you are currently wearing t
 >- You will only get 2 points if you wear something and it doesn't match the theme. (Gray participation stamp)
 
 * Dyes are BONUS POINTS and are worth 1 point right color, 2 points right shade.
+* Only your weapon slot and your armor slots have bonus dye chances, accessories do not.
 
 Based on this system system, it is very simple to know what your points will be prior to judging if you know the themed slots in advance. Luckily we know most of them thanks to the historical records from pervious weeks (links will be below) . Most of her data came from the reddit group that does dyes to the fashion report every Friday morning, though she did want me to give respect to Meoni because his videos were able to correct the mistakes that were made by othersas he took the time to make sure information was correct before creating his videos.
 
