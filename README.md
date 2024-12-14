@@ -3,8 +3,10 @@
 This plugin will Calculate your points based on what you are currently wearing to to you what your score will be. Scoring is based on a simple system that <b>[Scarlet Luna@Exodus](https://na.finalfantasyxiv.com/lodestone/character/42275509/)</b> discovered. Looking around the internet, no one else seemed to fully understand the system and had only a basic understanding of the system so as far as I know, she is the first person to be able to explain in detail the point system. She took the time to experiment with it and understand how it works. She shared that information with me and I used it to make this. Most of this MOD is based off her work which you can see from her Google Sheets.
 
 
->- Your Weapon and Armor slots are worth 10 points each.<br>
->- Your Accessory slots are worth 8 points each.<br>
+>- Your slots are worth specific points each.<br>
+>    - Your Weapon slot is worth 10 points.
+>    - Your Armor slots are worth 10 points.
+>    - Your Accessory slots are worth 8 points.<br>
 >- You will get 0 points in a slot for not wearing something.<br>
 >- You will get 2 points if you wear something and it doesn't match the slot theme. (Gray participation stamp)<br>
 >- You will get max points in a slot that isn't themed wearing something or matching the slot theme.
