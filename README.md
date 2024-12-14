@@ -16,10 +16,9 @@ This plugin will Calculate your points based on what you are currently wearing t
   - 2 points - Right shade.
 * Only your weapon slot and your armor slots have bonus dye chances, accessories do not.
 
-Based on this system system, it is very simple to know what your points will be prior to judging if you know the themed slots in advance. Luckily we know most of them thanks to the historical records from pervious weeks (links will be below) . Most of her data came from the reddit group that does dyes to the fashion report every Friday morning, though she did want me to give respect to Meoni because his videos were able to correct the mistakes that were made by othersas he took the time to make sure information was correct before creating his videos.
+All the slots combine to a total of 100 points with dyes being bonus points, though you can't go over 100 when judged. This system along with what will give us points based on the theme history, lets us know in advance what our point total will be. Using this information, I threw together a window to calculate this in real time so switching out your gear will update it.
 
-A website dedicated to this information will soon be going up, but I have nothing to do with it. The woman who wormed on me with this project and gathered all the data for it will be the one hosting it. I will link it here when it is ready since she is the reason we have this mod and it will use the same data.
-
+A website dedicated to this information will soon be going up, but I have nothing to do with it. Scarlet will be the one hosting it and I mention it because it was her hard work that made this MOD possible (I refuse to steal credit from her, she is the brains behind this). When that website is available, I will link it here to give her respect for her work.
 
 [Historical records](https://docs.google.com/spreadsheets/d/15O455rqMTFVuIdszKkVcBDxJF2mXKQ189_SOrjqfBOs/edit?usp=sharing) - Scarlet Luna's Google Sheets page dedicated to keeping track of the history of Fashion Report.<br>
 [Meoni's YouTube](https://www.youtube.com/@Meoni1) - Special thanks to Meoni and his contributions through the years.
