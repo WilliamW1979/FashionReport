@@ -18,5 +18,5 @@ Based on this system system, it is very simple to know what your points will be 
 A website dedicated to this information will soon be going up, but I have nothing to do with it. The woman who wormed on me with this project and gathered all the data for it will be the one hosting it. I will link it here when it is ready since she is the reason we have this mod and it will use the same data.
 
 
-Historical records - https://docs.google.com/spreadsheets/d/15O455rqMTFVuIdszKkVcBDxJF2mXKQ189_SOrjqfBOs/edit?usp=sharing
-Special thanks to Meoni and his contributions through the years. - https://www.youtube.com/@Meoni1
+[Historical records](https://docs.google.com/spreadsheets/d/15O455rqMTFVuIdszKkVcBDxJF2mXKQ189_SOrjqfBOs/edit?usp=sharing) - Scarlet Luna's Google Sheets page dedicated to keeping track of the history of Fashion Report.
+[Meoni's YouTube](https://www.youtube.com/@Meoni1) - Special thanks to Meoni and his contributions through the years.
