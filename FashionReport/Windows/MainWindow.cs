@@ -5,16 +5,13 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using ImGuiNET;
 using Lumina.Excel.Sheets;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 
 namespace FashionReport.Windows;
 
 public class MAINWINDOW : Window, IDisposable
 {
-//    private string? WolfPawImagePath;
-    private FASHIONREPORT FashionReport;
+    private readonly FASHIONREPORT FashionReport;
     private CONFIGURATION Configuration;
     private bool bToggle;
     private STATE eState;
@@ -30,7 +27,6 @@ public class MAINWINDOW : Window, IDisposable
         sCurrentTheme = "";
         sCurrentThemeData = "";
         eState = STATE.Main;
-
         SizeConstraints = new WindowSizeConstraints
         {
             MinimumSize = new Vector2(375, 330),
@@ -119,7 +115,7 @@ public class MAINWINDOW : Window, IDisposable
         if (Configuration.sWeapon == "") ImGui.NewLine(); else ButtonTheme(Configuration.sWeapon, Configuration.sWeaponData, 1);
         if (Configuration.sHead == "") ImGui.NewLine(); else ButtonTheme(Configuration.sHead, Configuration.sHeadData, 3);
         if (Configuration.sBody == "") ImGui.NewLine(); else ButtonTheme(Configuration.sBody, Configuration.sBodyData, 4);
-        if (Configuration.sGloves == "") ImGui.NewLine(); else ButtonTheme(Configuration.sGloves, Configuration.sGlovesData, 6);
+        if (Configuration.sGloves == "") ImGui.NewLine(); else ButtonTheme(Configuration.sGloves, Configuration.sGlovesData, 5);
         if (Configuration.sLegs == "") ImGui.NewLine(); else ButtonTheme(Configuration.sLegs, Configuration.sLegsData, 7);
         if (Configuration.sBoots == "") ImGui.NewLine(); else ButtonTheme(Configuration.sBoots, Configuration.sBootsData, 8);
         if (Configuration.sEarrings == "") ImGui.NewLine(); else ButtonTheme(Configuration.sEarrings, Configuration.sEarringsData, 9);
@@ -129,9 +125,7 @@ public class MAINWINDOW : Window, IDisposable
         if (Configuration.sLeftRing == "") ImGui.NewLine(); else ButtonTheme(Configuration.sLeftRing, Configuration.sLeftRingData, 13);
 
         ImGui.NextColumn();
-
         uint[] SlotPoints = new uint[11];
-
         SlotPoints[0] = GetSlotPoints(GetEquipped(0), Configuration.sWeapon, Configuration.sWeaponData);
         SlotPoints[1] = GetSlotPoints(GetEquipped(2), Configuration.sHead, Configuration.sHeadData);
         SlotPoints[2] = GetSlotPoints(GetEquipped(3), Configuration.sBody, Configuration.sBodyData);
@@ -164,26 +158,6 @@ public class MAINWINDOW : Window, IDisposable
         ImGui.SetWindowFontScale(4);
         TextCentered(Points.ToString() + " points");
         ImGui.SetWindowFontScale(1);
-    }
-
-    void ButtonText(string sText)
-    {
-        Vector2 vTextSize = ImGui.CalcTextSize(sText);
-        float fButtonWidth = vTextSize.X + ImGui.GetStyle().FramePadding.X * 2.0f;
-        float fColunWidth = ImGui.GetContentRegionAvail().X;
-        float fOffsetX = (fColunWidth - fButtonWidth) / 2.0f;
-        ImGui.SetCursorPosX(ImGui.GetCursorPosX() + fOffsetX);
-        if (ImGui.InvisibleButton("##" + sText, vTextSize))
-        {
-        }
-        Vector2 vButtonPos = ImGui.GetItemRectMin();
-        ImDrawListPtr drawlist = ImGui.GetWindowDrawList();
-        uint iBlueColor = ImGui.ColorConvertFloat4ToU32(new Vector4(0.0f, 0.5f, 1.0f, 1.0f));
-
-        Vector2 vUnderlineStart = new Vector2(vButtonPos.X, vButtonPos.Y + vTextSize.Y + 1); // Slight offset below the text
-        Vector2 vUnderlineEnd = new Vector2(vButtonPos.X + vTextSize.X, vButtonPos.Y + vTextSize.Y + 1);
-        drawlist.AddLine(vUnderlineStart, vUnderlineEnd, iBlueColor, 1.0f); // Line thickness of 1.0f
-        ImGui.GetWindowDrawList().AddText(vButtonPos, ImGui.ColorConvertFloat4ToU32(new Vector4(0.0f, 0.5f, 1.0f, 1.0f)), sText);
     }
 
     void ButtonTheme(string sTheme, string sThemeData, uint uiSlot)

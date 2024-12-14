@@ -6,12 +6,12 @@
     "Tags": [ "Fashion Report", "Gold Saucer", "Mini Game", "Masked Rose", "Glamour", "MGP" ],
     "CategoryTags": [ "Utility", "UI" ],
     "InternalName": "FashionReport",
-    "AssemblyVersion": "0.1.0",
-    "RepoUrl": "https://https:/github.com/WilliamW1979/FashionReport",
-    "DownloadLinkInstall": "https://github.com/WilliamW1979/FashionReport/releases/download/v0.1.0/latest.zip",
-    "DownloadLinkTesting": "https://github.com/WilliamW1979/FashionReport/releases/download/v0.1.0/latest.zip",
-    "DownloadLinkUpdate": "https://github.com/WilliamW1979/FashionReport/releases/download/v0.1.0/latest.zip",
+    "AssemblyVersion": "0.1.2",
+    "RepoUrl": "https://github.com/WilliamW1979/FashionReport",
+    "DownloadLinkInstall": "https://github.com/WilliamW1979/FashionReport/releases/download/v0.1.2/latest.zip",
+    "DownloadLinkTesting": "https://github.com/WilliamW1979/FashionReport/releases/download/v0.1.2/latest.zip",
+    "DownloadLinkUpdate": "https://github.com/WilliamW1979/FashionReport/releases/download/v0.1.2/latest.zip",
     "ApplicableVersion": "any",
     "DalamudApiLevel": 11,
-    "IconUrl": "https://github.com/WilliamW1979/FashionReport/raw/master/Data/Wolf%20Paw.png"
+    "IconUrl": "https://github.com/WilliamW1979/FashionReport/raw/master/FashionReport/images/icon.png"
 }

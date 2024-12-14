@@ -4,3 +4,4 @@ bin/
 *.user
 /FashionReport/App.config
 /FashionReport/Log.cs
+/FashionReport/FashionReport.config

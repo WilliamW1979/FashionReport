@@ -17,10 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="..\Data\Wolf Paw.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Visible>false</Visible>
-    </Content>
+    <Content Include="images\icon.png" />
   </ItemGroup>
 
   <ItemGroup>
