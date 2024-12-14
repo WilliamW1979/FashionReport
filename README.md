@@ -6,9 +6,8 @@ This plugin will Calculate your points based on what you are currently wearing t
 >- Your Weapon and Armor slots are worth 10 points each.<br>
 >- Your Accessory slots are worth 8 points each.<br>
 >- You will get 0 points in a slot for not wearing something.<br>
->- You will get max points in a slot that isn't themed wearing something.<br>
->- You will get max points if you wear a themed item. (Gold Coin Symbol)<br>
->- You will only get 2 points if you wear something and it doesn't match the theme. (Gray participation stamp)
+>- You will get 2 points if you wear something and it doesn't match the slot theme. (Gray participation stamp)<br>
+>- You will get max points in a slot that isn't themed wearing something or matching the slot theme.
 
 * Dyes are BONUS POINTS and are worth 1 point right color, 2 points right shade.
 * Only your weapon slot and your armor slots have bonus dye chances, accessories do not.
