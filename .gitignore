@@ -5,3 +5,7 @@ bin/
 /FashionReport/App.config
 /FashionReport/Log.cs
 /FashionReport/FashionReport.config
+/FashionReport/images/Left Arrow.png
+/FashionReport/images/message.txt
+/FashionReport/Windows/SlotWindow.cs
+/FashionReport/Windows/ConfigWindow.cs

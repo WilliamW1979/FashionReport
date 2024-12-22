@@ -10,10 +10,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Dyes.cs" />
     <Compile Remove="Log.cs" />
     <Compile Remove="Week.cs" />
+    <Compile Remove="Windows\AutoRetainerIntegration.cs" />
     <Compile Remove="Windows\ConfigWindow.cs" />
+    <Compile Remove="Windows\ModCheckerWindow.cs" />
     <Compile Remove="Windows\SlotWindow.cs" />
+    <Compile Remove="Windows\VenderLookup.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="FashionReport.config" />
   </ItemGroup>
 
   <ItemGroup>
@@ -21,6 +29,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="FashionReport.config" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="MySql.Data" Version="9.1.0" />
+    <PackageReference Include="StbImageSharp" Version="2.30.15" />
   </ItemGroup>
 </Project>
