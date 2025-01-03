@@ -15,19 +15,19 @@ public sealed class FASHIONREPORT : IDalamudPlugin
     {
         pluginInterface.Create<SERVICES>();
         DataManagement = SERVICES.Interface.GetPluginConfig() as DATAMANAGEMENT ?? new DATAMANAGEMENT();
-        DATAMANAGEMENT.Load();
         MainWindow = new MAINWINDOW(this);
-        GEARMANAGER.Generate();
 
         WindowSystem.AddWindow(MainWindow);
 
 #pragma warning disable CS8602
         SERVICES.CommandManager.AddHandler("/fr", new CommandInfo(OnCommand) { HelpMessage = "Fashion Report calculator!" });
         SERVICES.CommandManager.AddHandler("/fashionreport", new CommandInfo(OnCommand) { HelpMessage = "Fashion Report calculator!" });
-#pragma warning restore CS8602
-
         SERVICES.Interface.UiBuilder.Draw += DrawUI;
         SERVICES.Interface.UiBuilder.OpenMainUi += ToggleMainUI;
+#pragma warning restore CS8602
+
+        GEARMANAGER.Generate();
+        DATAMANAGEMENT.Load();
         DataManagement.AccessServerData();
     }
 
