@@ -147,7 +147,6 @@ public class MAINWINDOW : Window, IDisposable
 
             if (SlotDyes.TryGetValue(slot, out DYES.DYEINFO Dyes) && Dyes.DyeId != 0 && string.IsNullOrEmpty(Dyes.DyeName))
             {
-                SERVICES.Log.Info($"Dye.Name is {Dyes.DyeId}");
                 ImGui.SameLine();
                 ImGui.Text($" ({Dyes.DyeName})");
             }

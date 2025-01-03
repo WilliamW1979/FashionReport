@@ -106,7 +106,6 @@ namespace FashionReport
             {
                 if (SlotThemes.TryGetValue(slot, out string? Theme) && !string.IsNullOrEmpty(Theme))
                 {
-                    SERVICES.Log.Info($"Theme is {Theme}");
                     MySqlCommand cmd = new MySqlCommand();
                     cmd.Connection = Connector;
                     cmd.CommandText = "SELECT Gears FROM SlotThemes WHERE Theme=@Theme";
@@ -114,7 +113,6 @@ namespace FashionReport
                     MySqlDataReader reader = cmd.ExecuteReader();
                     if (reader.Read())
                         SlotData[slot] = reader["Gears"].ToString();
-                    SERVICES.Log.Info($"SlotData[slot] is {SlotData[slot].ToString()}");
                     reader.Close();
                     Save();
                 }
@@ -143,7 +141,6 @@ namespace FashionReport
                     }
                     catch { }
                 }
-                SERVICES.Log.Info($"Clearing SlotDyes!");
                 SlotDyes.Clear();
                 foreach (string dye in Dyes)
                 {
