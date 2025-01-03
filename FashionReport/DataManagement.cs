@@ -157,7 +157,34 @@ namespace FashionReport
             Save();
         }
 
-        public void AccessServerData()
+        private void GetDyes(MySqlConnection Connector, string Weekly)
+        {
+            MySqlCommand cmd = new MySqlCommand();
+            cmd.Connection = Connector;
+            cmd.CommandText = "SELECT * FROM FashionReport WHERE WeeklyTheme=@Weekly";
+            cmd.Parameters.AddWithValue("@Weekly", Weekly);
+            MySqlDataReader reader = cmd.ExecuteReader();
+            if (reader.Read())
+            {
+                if (string.IsNullOrEmpty(reader["WeeklyTheme"].ToString()))
+                    return;
+                SlotDyes.Clear();
+                foreach (string dye in Dyes)
+                {
+                    try
+                    {
+                        string? Data = reader[dye].ToString();
+                        if (!string.IsNullOrEmpty(Data))
+                            SlotDyes[dye.Replace("Dye", "")] = GetDyeInfo(Data);
+                    }
+                    catch { }
+                }
+            }
+            reader.Close();
+            Save();
+        }
+
+        public void AccessServerData(bool Dyes = false)
         {
             try
             {
@@ -191,6 +218,8 @@ namespace FashionReport
                             GetThemeData(connection);
                             Save();
                         }
+                        else if (Dyes)
+                            GetDyes(connection, WeeklyTheme);
                         connection.Close();
                     }
                 }

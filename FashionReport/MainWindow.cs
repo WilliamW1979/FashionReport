@@ -89,7 +89,7 @@ public class MAINWINDOW : Window, IDisposable
         if ((Now.DayOfWeek == DayOfWeek.Friday || Now.DayOfWeek == DayOfWeek.Saturday || Now.DayOfWeek == DayOfWeek.Sunday || Now.DayOfWeek == DayOfWeek.Monday))
             if (((LastDyeChecked + ts) > Now) && (SlotDyes["Weapon"].DyeId == 0 || SlotDyes["Head"].DyeId == 0 || DataManagement.SlotDyes["Body"].DyeId == 0 || SlotDyes["Gloves"].DyeId == 0 || SlotDyes["Legs"].DyeId == 0 || SlotDyes["Boots"].DyeId == 0))
             {
-                DataManagement.AccessServerData();
+                DataManagement.AccessServerData(true);
                 LastDyeChecked = Now;
                 return;
             }
