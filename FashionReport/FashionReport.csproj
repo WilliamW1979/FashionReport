@@ -10,14 +10,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Dyes.cs" />
+    <Compile Remove="Configuration.cs" />
     <Compile Remove="Log.cs" />
     <Compile Remove="Week.cs" />
-    <Compile Remove="Windows\AutoRetainerIntegration.cs" />
-    <Compile Remove="Windows\ConfigWindow.cs" />
-    <Compile Remove="Windows\ModCheckerWindow.cs" />
-    <Compile Remove="Windows\SlotWindow.cs" />
-    <Compile Remove="Windows\VenderLookup.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -34,6 +29,9 @@
 
   <ItemGroup>
     <PackageReference Include="MySql.Data" Version="9.1.0" />
+    <PackageReference Include="Selenium.Support" Version="4.27.0" />
+    <PackageReference Include="Selenium.WebDriver" Version="4.27.0" />
+    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="131.0.6778.20400" />
     <PackageReference Include="StbImageSharp" Version="2.30.15" />
   </ItemGroup>
 </Project>

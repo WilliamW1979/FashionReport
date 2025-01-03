@@ -29,6 +29,27 @@
           "ZstdSharp.Port": "0.8.0"
         }
       },
+      "Selenium.Support": {
+        "type": "Direct",
+        "requested": "[4.27.0, )",
+        "resolved": "4.27.0",
+        "contentHash": "vPsJmYP+ONxutAmkpSc2cXJCO/eHjP+4dccx/M9mGntOZuVjM0DOzyH2cvX8tDoQ18yUq8l2P4rA3a278Gp2KQ==",
+        "dependencies": {
+          "Selenium.WebDriver": "4.27.0"
+        }
+      },
+      "Selenium.WebDriver": {
+        "type": "Direct",
+        "requested": "[4.27.0, )",
+        "resolved": "4.27.0",
+        "contentHash": "bMIpqwpBfYLa1lh8gPVa6A1i9LeWNsfc2mR9why0DutEKI7ck3GVxzco1bB/8bv+7IA6rk4sR9WpZLRUnH/AAw=="
+      },
+      "Selenium.WebDriver.ChromeDriver": {
+        "type": "Direct",
+        "requested": "[131.0.6778.20400, )",
+        "resolved": "131.0.6778.20400",
+        "contentHash": "K3U9GgnAJES8DJEsjiDhHC7M5yBoJAKmBi+FO8Gy+NEhKI+LFSvC6du5IQ8/t9yYV59obU6DBVraYxNgcxXXpg=="
+      },
       "StbImageSharp": {
         "type": "Direct",
         "requested": "[2.30.15, )",

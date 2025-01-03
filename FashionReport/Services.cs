@@ -2,6 +2,8 @@ using Dalamud.Game.ClientState.Objects;
 using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
+using System.Diagnostics.Contracts;
+using System.Dynamic;
 
 namespace FashionReport
 {
@@ -20,5 +22,6 @@ namespace FashionReport
         [PluginService] public static IPartyList PartyList { get; private set; } = null!;
         [PluginService] public static ITextureProvider TextureProvider { get; private set; } = null!;
         [PluginService] public static IPluginLog Log { get; private set; } = null!;
+        [PluginService] public static IGameInventory GameInventory { get; private set; } = null!;
     }
 }
