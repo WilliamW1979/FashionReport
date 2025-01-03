@@ -13,7 +13,7 @@ Basically, just replace all references to `SamplePlugin` in all of the files and
 >- You will get max points in a slot that isn't themed wearing anything or matching the slot theme. (Gold stamp for matched theme)
 
 * Dyes are BONUS POINTS
-  - 1 point - Wronge shade but right color.
+  - 1 point - Wrong shade but right color.
   - 2 points - Right shade.
 * Only your weapon slot and your armor slots have bonus dye chances, accessories do not.
 
