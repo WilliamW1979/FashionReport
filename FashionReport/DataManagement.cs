@@ -168,7 +168,6 @@ namespace FashionReport
             {
                 if (string.IsNullOrEmpty(reader["WeeklyTheme"].ToString()))
                     return;
-                SlotDyes.Clear();
                 foreach (string dye in Dyes)
                 {
                     try

@@ -89,12 +89,13 @@ public class MAINWINDOW : Window, IDisposable
         if ((Now.DayOfWeek == DayOfWeek.Friday || Now.DayOfWeek == DayOfWeek.Saturday || Now.DayOfWeek == DayOfWeek.Sunday || Now.DayOfWeek == DayOfWeek.Monday))
             if (((LastDyeChecked + ts) > Now) && (SlotDyes["Weapon"].DyeId == 0 || SlotDyes["Head"].DyeId == 0 || DataManagement.SlotDyes["Body"].DyeId == 0 || SlotDyes["Gloves"].DyeId == 0 || SlotDyes["Legs"].DyeId == 0 || SlotDyes["Boots"].DyeId == 0))
             {
+                SERVICES.Log.Info($"Checking Dyes");
                 DataManagement.AccessServerData(true);
                 LastDyeChecked = Now;
                 return;
             }
 
-        if (SlotData.Count < 0)
+        if (SlotData.Count == 0)
         {
             DataManagement.AccessServerData();
             return;
@@ -145,7 +146,7 @@ public class MAINWINDOW : Window, IDisposable
             else
                 ImGui.Text(slot);
 
-            if (SlotDyes.TryGetValue(slot, out DYES.DYEINFO Dyes) && Dyes.DyeId != 0 && string.IsNullOrEmpty(Dyes.DyeName))
+            if (SlotDyes.TryGetValue(slot, out DYES.DYEINFO Dyes) && Dyes.DyeId != 0 && !string.IsNullOrEmpty(Dyes.DyeName))
             {
                 ImGui.SameLine();
                 ImGui.Text($" ({Dyes.DyeName})");
@@ -219,6 +220,7 @@ public class MAINWINDOW : Window, IDisposable
 
         ImGui.SetWindowFontScale(1);
         IMGUIFORMAT.TextCenteredColumn("Dyes are factored in as bonus points IF next to the Weapon or Armor category it is listed! (Updates after Friday when Historical Data is updated by Scarlet)");
+        IMGUIFORMAT.TextCenteredColumn("Black and White dyes may be off due to how the shading system works. Future testing will weed out these problems in a future update.");
         ImGui.Separator();
     }
 

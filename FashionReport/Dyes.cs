@@ -41,9 +41,9 @@ namespace FashionReport
 
         public static uint CompareColors(DYEINFO Dye, DYEINFO Slot1, DYEINFO Slot2)
         {
-            if (Dye.DyeId == 0)
+            if (Dye.DyeId == 0 || Dye.DyeColor == 0)
                 return 0;
-            if ((Dye.DyeColor == Slot1.DyeColor || Dye.DyeColor == Slot2.DyeColor) && Dye.DyeColor != 0)
+            if ((Dye.DyeColor == Slot1.DyeColor || Dye.DyeColor == Slot2.DyeColor))
                 return 2;
             uint dDye = Dye.DyeShade, dSlot1 = Slot1.DyeShade, dSlot2 = Slot2.DyeShade;
             if (dDye == 10) dDye = Convert10(Dye.DyeName);
@@ -82,12 +82,14 @@ namespace FashionReport
 
         private static uint Convert10(string Dye)
         {
+            SERVICES.Log.Info($"Dye: {Dye}");
             switch (Dye)
             {
                 case "Pearl White":
                 case "Pure White":
                 case "Jet Black":
                 case "Metallic Silver":
+                case "Gunmetal Black":
                     return 2;
                 case "Pastel Pink":
                 case "Dark Red":
