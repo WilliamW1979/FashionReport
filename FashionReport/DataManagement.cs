@@ -1,16 +1,13 @@
 using Dalamud.Configuration;
 using Dalamud.Memory;
+using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using MySql.Data.MySqlClient;
-using OpenQA.Selenium.DevTools;
-using OpenQA.Selenium.DevTools.V129.Debugger;
-using OpenQA.Selenium.DevTools.V129.ServiceWorker;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Reflection.Metadata.Ecma335;
 using System.Xml.Linq;
 using static FashionReport.DYES;
 #pragma warning disable IDE1006
@@ -136,6 +133,7 @@ namespace FashionReport
                     try
                     {
                         string? Data = reader[slot].ToString();
+                        SERVICES.Log.Info($"Data {slot}: {Data}");
                         if (!string.IsNullOrEmpty(Data))
                             SlotThemes[slot] = Data;
                     }
@@ -183,7 +181,7 @@ namespace FashionReport
             Save();
         }
 
-        public void AccessServerData(bool Dyes = false)
+        public void AccessServerData(bool Dyes = false, bool FirstRun = false)
         {
             try
             {
@@ -210,8 +208,17 @@ namespace FashionReport
                     using (MySqlConnection connection = new MySqlConnection(connectionString))
                     {
                         connection.Open();
+                        if (FirstRun)
+                        {
+                            GetSlotThemesAndDyes(connection, GetWeek(connection));
+                            GetThemeData(connection);
+                            GetDyes(connection, GetWeek(connection));
+                            Save();
+                            connection.Close();
+                            return;
+                        }
                         string? FinalWeek = GetWeek(connection);
-                        if ((string.IsNullOrEmpty(WeeklyTheme)) || (!string.IsNullOrEmpty(WeeklyTheme) && WeekExists(connection, WeeklyTheme)))
+                        if (SlotThemes.Count < 4 || SlotData.Count < 4 || (string.IsNullOrEmpty(WeeklyTheme)) || (!string.IsNullOrEmpty(WeeklyTheme) && WeekExists(connection, WeeklyTheme)))
                         {
                             GetSlotThemesAndDyes(connection, FinalWeek);
                             GetThemeData(connection);

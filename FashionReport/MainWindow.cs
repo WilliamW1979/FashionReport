@@ -3,12 +3,10 @@ using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Interface.Windowing;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using ImGuiNET;
-using OpenQA.Selenium.DevTools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Threading;
 using Item = Lumina.Excel.Sheets.Item;
 #pragma warning disable IDE1006
 
@@ -206,7 +204,7 @@ public class MAINWINDOW : Window, IDisposable
 
         ImGui.Columns(1);
         ImGui.Separator();
-        ImGui.SetWindowFontScale(5);
+        ImGui.SetWindowFontScale(4);
 
         if (TotalPoints > 100) TotalPoints = 100;
         if (TotalPoints < 80)
@@ -364,6 +362,9 @@ public class MAINWINDOW : Window, IDisposable
         DataManagement.SlotData.TryGetValue(slot, out string? Data);
 
         if (item.ItemId == 0) return 0;
+        uint ID = item.ItemId;
+        if (item.GlamourId != 0)
+            ID = item.GlamourId;
         if (string.IsNullOrEmpty(Theme) && string.IsNullOrEmpty(Data))
             return SlotMax[slot];
         if ((string.IsNullOrEmpty(Theme) && !string.IsNullOrEmpty(Data)) || (!string.IsNullOrEmpty(Theme) && string.IsNullOrEmpty(Data)))
@@ -375,11 +376,11 @@ public class MAINWINDOW : Window, IDisposable
         {
             string[] Gears = Data.Split('|');
             foreach (string Gear in Gears)
-                if (item.ItemId == uint.Parse(Gear))
+                if (ID == uint.Parse(Gear))
                     return SlotMax[slot];
             return 2;
         }
-        return 50;
+        return 50; // We have an error if we get here!
     }
 
     private uint GetDyePoints(string slot)

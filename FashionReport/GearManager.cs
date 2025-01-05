@@ -1,7 +1,6 @@
 using Dalamud.Interface.Textures;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using ImGuiNET;
-using OpenQA.Selenium.DevTools.V129.DOM;
 using System;
 using System.Collections.Generic;
 using System.IO;

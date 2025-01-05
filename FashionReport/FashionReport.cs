@@ -14,7 +14,7 @@ public sealed class FASHIONREPORT : IDalamudPlugin
     public FASHIONREPORT(IDalamudPluginInterface pluginInterface)
     {
         pluginInterface.Create<SERVICES>();
-        DataManagement = SERVICES.Interface.GetPluginConfig() as DATAMANAGEMENT ?? new DATAMANAGEMENT();
+        DATAMANAGEMENT.Load();
         MainWindow = new MAINWINDOW(this);
 
         WindowSystem.AddWindow(MainWindow);
@@ -28,14 +28,13 @@ public sealed class FASHIONREPORT : IDalamudPlugin
 
         GEARMANAGER.Generate();
         DATAMANAGEMENT.Load();
-        DataManagement.AccessServerData();
+        if (DataManagement != null) DataManagement.AccessServerData();
     }
 
     public void Dispose()
     {
         WindowSystem.RemoveAllWindows();
         MainWindow.Dispose();
-
         SERVICES.CommandManager.RemoveHandler("/fr");
         SERVICES.CommandManager.RemoveHandler("/fashionreport");
     }
