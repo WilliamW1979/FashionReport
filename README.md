@@ -15,7 +15,7 @@ This plugin will Calculate your points based on what you are currently wearing t
 >    - 2 points - Right shade.
 >* Only your weapon slot and your armor slots have bonus dye chances, accessories do not.
 
-All the slots combine to a total of 100 points with dyes being bonus points, though you can't go over 100 when judged. This system along with what will give us points based on the theme history, lets us know in advance what our point total will be. Using this information, I threw together a window to calculate this in real time so switching out your gear will update it.
+All the slots combine to a total of 100 points with dyes being bonus points. Even though you can go over 100 points, you will only recieve a maximum of 100 points. This system along with what will give us points based on the theme history, lets us know in advance what our point total will be. Using this information, I threw together a window to calculate this in real time so switching out your gear will update it.
 
 A website dedicated to this information will soon be going up, but I have nothing to do with it. Scarlet will be the one hosting it and I mention it because it was her hard work that made this MOD possible (I refuse to steal credit from her, she is the brains behind this). When that website is available, I will link it here to give her respect for her work.
 
