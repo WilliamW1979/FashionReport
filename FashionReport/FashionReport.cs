@@ -8,7 +8,7 @@ namespace FashionReport;
 public sealed class FASHIONREPORT : IDalamudPlugin
 {
     public readonly WindowSystem WindowSystem = new("Fashion Report");
-    public DATAMANAGEMENT DataManagement { get; set; }
+    public DATAMANAGEMENT DataManagement { get; set; } = null!;
     private MAINWINDOW MainWindow { get; init; }
 
     public FASHIONREPORT(IDalamudPluginInterface pluginInterface)
@@ -28,7 +28,6 @@ public sealed class FASHIONREPORT : IDalamudPlugin
 
         GEARMANAGER.Generate();
         DATAMANAGEMENT.Load();
-        if (DataManagement != null) DataManagement.AccessServerData();
     }
 
     public void Dispose()

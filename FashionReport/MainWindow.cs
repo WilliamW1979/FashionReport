@@ -4,12 +4,19 @@ using Dalamud.Interface.Windowing;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using ImGuiNET;
 using System;
+using System.Threading;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using Item = Lumina.Excel.Sheets.Item;
+using Dalamud.Memory;
+using FFXIVClientStructs.FFXIV.Component.GUI;
+using static FFXIVClientStructs.FFXIV.Client.Game.UI.MapMarkerData.Delegates;
+using System.Net.Security;
+using System.Data;
+using Lumina.Data.Parsing.Tex.Buffers;
 #pragma warning disable IDE1006
-
+#pragma warning disable CS8602
 namespace FashionReport;
 
 public class MAINWINDOW : Window, IDisposable
@@ -49,7 +56,95 @@ public class MAINWINDOW : Window, IDisposable
         foreach (string slot in DataManagement.Slots)
             EquippedGear[slot] = GEARMANAGER.GetEquipped(GEARMANAGER.GetEquipSlotCategory(slot));
 
-       DataManagement.AccessServerData();
+        Thread GameDataCheck = new Thread(new ThreadStart(GameDataReader));
+        Thread DyeCheck = new Thread(new ThreadStart(DatabaseDyeReader));
+        GameDataCheck.Start();
+        DyeCheck.Start();
+    }
+
+    public void DatabaseDyeReader()
+    {
+        Thread.Sleep(600000);
+        while (true)
+        {
+            if (DataManagement.IsDyes() && DataManagement.CalculateFriday().AddDays(7) > DateTime.Now)
+            {
+                SERVICES.Log.Info("Dye Thread sleeping until " + DataManagement.CalculateFriday().AddDays(7).ToLocalTime());
+                Thread.Sleep(DataManagement.CalculateFriday().AddDays(7) - DateTime.Now);
+            }
+            if (DataManagement.CalculateFriday() > DateTime.Now)
+            {
+                SERVICES.Log.Info("Dye Thread sleeping until " + DataManagement.CalculateFriday().ToLocalTime());
+                Thread.Sleep(DataManagement.CalculateFriday() - DateTime.Now);
+            }
+            DataManagement.ReadDataFromServer();
+            Thread.Sleep(60000);
+        }
+    }
+
+    /*
+    // To be implimented later
+    public unsafe void ThreadReader()
+    {
+        bool bDyes = false;
+        bool bWeek = false;
+        TimeSpan Dyes = DataManagement.CalculateFriday().AddDays(7) - DateTime.Now;
+        TimeSpan Week = DataManagement.CalculateTuesday().AddDays(7) - DateTime.Now;
+        Thread.Sleep(600000);
+        DataManagement.ReadDataFromServer();
+        while (true)
+        {
+            if (bDyes && bWeek)
+            {
+                if (Dyes < Week)
+                    Thread.Sleep(Dyes);
+                else
+                    Thread.Sleep(Week);
+            }
+
+            if (!bWeek)
+            {
+                if (DataManagement.GetCurrentWeek() == DataManagement.Week)
+                {
+                    bWeek = true;
+                    DateTime temp = DataManagement.CalculateTuesday().AddDays(7);
+                    SERVICES.Log.Info("Game reading Thread Sleeping until " + temp.ToLocalTime());
+                    Thread.Sleep(temp - DateTime.Now);
+                }
+                else
+                {
+                    AtkUnitBase* addon = (AtkUnitBase*)SERVICES.GameGui.GetAddonByName("FashionCheck");
+                    if ((nint)addon != IntPtr.Zero)
+                        if ((((AtkUnitBase*)addon)->RootNode != null && ((AtkUnitBase*)addon)->RootNode->IsVisible()))
+                            DataManagement.ReadDataFromGame();
+                    Thread.Sleep(5000);
+                }
+            }
+        }
+    }
+    */
+
+    public unsafe void GameDataReader()
+    {
+        DataManagement.ReadDataFromServer();
+        Thread.Sleep(600000);
+        while (true)
+        {
+            if (DataManagement.GetCurrentWeek() == DataManagement.Week)
+            {
+                DateTime temp = DataManagement.CalculateTuesday().AddDays(7);
+                SERVICES.Log.Info("Game reading Thread Sleeping until " + temp.ToLocalTime());
+                Thread.Sleep(temp - DateTime.Now);
+            }
+            else
+            {
+                AtkUnitBase* addon = (AtkUnitBase*)SERVICES.GameGui.GetAddonByName("FashionCheck");
+                if ((nint)addon != IntPtr.Zero)
+                    if ((((AtkUnitBase*)addon)->RootNode != null && ((AtkUnitBase*)addon)->RootNode->IsVisible()))
+                        DataManagement.ReadDataFromGame();
+                Thread.Sleep(5000);
+            }
+        }
     }
 
     public void Reset() => sState = "Main";
@@ -58,7 +153,11 @@ public class MAINWINDOW : Window, IDisposable
 
     public override void Draw()
     {
-        DataManagement.GetDataFromGame(this);
+        if (DataManagement.IsError())
+        {
+            SERVICES.Log.Info("There was a DataManagement Error, correcting it now!");
+            DataManagement.ReadDataFromServer();
+        }
         if (sState == "Main")
             MainDraw();
         else
@@ -75,12 +174,13 @@ public class MAINWINDOW : Window, IDisposable
 
         foreach (string slot in DataManagement.Slots)
             EquippedGear[slot] = GEARMANAGER.GetEquipped(GEARMANAGER.GetEquipSlotCategory(slot));
-
+        
+        /*
         DateTime Now = DateTime.Now;
         if (Now.DayOfWeek != LastChecked.DayOfWeek || Now.Day != LastChecked.Day || LastChecked == new DateTime(2000, 1, 1, 0, 0, 0))
         {
             LastChecked = Now;
-            DataManagement.AccessServerData();
+            DataManagement.ReadDataFromServer();
             return;
         }
         TimeSpan ts = new TimeSpan(0, 15, 0);
@@ -88,16 +188,17 @@ public class MAINWINDOW : Window, IDisposable
             if (((LastDyeChecked + ts) > Now) && (SlotDyes["Weapon"].DyeId == 0 || SlotDyes["Head"].DyeId == 0 || DataManagement.SlotDyes["Body"].DyeId == 0 || SlotDyes["Gloves"].DyeId == 0 || SlotDyes["Legs"].DyeId == 0 || SlotDyes["Boots"].DyeId == 0))
             {
                 SERVICES.Log.Info($"Checking Dyes");
-                DataManagement.AccessServerData(true);
+                DataManagement.ReadDataFromServer();
                 LastDyeChecked = Now;
                 return;
             }
 
         if (SlotData.Count == 0)
         {
-            DataManagement.AccessServerData();
+            DataManagement.ReadDataFromServer();
             return;
         }
+        */
 
         ImGui.SetWindowFontScale(3);
         IMGUIFORMAT.TextCenteredColumn(DataManagement.WeeklyTheme);
@@ -369,7 +470,7 @@ public class MAINWINDOW : Window, IDisposable
             return SlotMax[slot];
         if ((string.IsNullOrEmpty(Theme) && !string.IsNullOrEmpty(Data)) || (!string.IsNullOrEmpty(Theme) && string.IsNullOrEmpty(Data)))
         {
-            DataManagement.AccessServerData();
+            DataManagement.ReadDataFromServer();
             return 1;
         }
         if (Data != null)
