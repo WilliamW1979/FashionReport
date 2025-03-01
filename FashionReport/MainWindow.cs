@@ -46,13 +46,13 @@ public class MAINWINDOW : Window, IDisposable
     public MAINWINDOW(FASHIONREPORT fashionReport) : base("Fashion Report", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
     {
         this.FashionReport = fashionReport;
-
+/*
         SizeConstraints = new WindowSizeConstraints
         {
             MinimumSize = new Vector2(1110, 440),
             MaximumSize = new Vector2(1110, 440)
         };
-        
+*/        
         foreach (string slot in DataManagement.Slots)
             EquippedGear[slot] = GEARMANAGER.GetEquipped(GEARMANAGER.GetEquipSlotCategory(slot));
 
