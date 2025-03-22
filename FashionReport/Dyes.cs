@@ -87,8 +87,8 @@ namespace FashionReport
                 case "Pearl White":
                 case "Pure White":
                 case "Snow White":
-                    return 11;
                 case "Metallic Silver":
+                    return 11;
                 case "Ash Grey":
                 case "Goobbue Grey":
                 case "Slate Grey":

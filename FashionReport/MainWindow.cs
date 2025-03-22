@@ -2,19 +2,15 @@ using Dalamud.Interface.Textures;
 using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Interface.Windowing;
 using FFXIVClientStructs.FFXIV.Client.Game;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 using ImGuiNET;
 using System;
-using System.Threading;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Threading;
+using System.Threading.Tasks;
 using Item = Lumina.Excel.Sheets.Item;
-using Dalamud.Memory;
-using FFXIVClientStructs.FFXIV.Component.GUI;
-using static FFXIVClientStructs.FFXIV.Client.Game.UI.MapMarkerData.Delegates;
-using System.Net.Security;
-using System.Data;
-using Lumina.Data.Parsing.Tex.Buffers;
 #pragma warning disable IDE1006
 #pragma warning disable CS8602
 namespace FashionReport;
@@ -56,29 +52,36 @@ public class MAINWINDOW : Window, IDisposable
         foreach (string slot in DataManagement.Slots)
             EquippedGear[slot] = GEARMANAGER.GetEquipped(GEARMANAGER.GetEquipSlotCategory(slot));
 
-        Thread GameDataCheck = new Thread(new ThreadStart(GameDataReader));
-        Thread DyeCheck = new Thread(new ThreadStart(DatabaseDyeReader));
-        GameDataCheck.Start();
-        DyeCheck.Start();
+        Task.Run(GameDataReader);
+        Task.Run(DatabaseDyeReader);
     }
 
-    public void DatabaseDyeReader()
+    public async Task DatabaseDyeReader()
     {
-        Thread.Sleep(600000);
+        Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
+        await Task.Delay(600000);
         while (true)
         {
-            if (DataManagement.IsDyes() && DataManagement.CalculateFriday().AddDays(7) > DateTime.Now)
-            {
-                SERVICES.Log.Info("Dye Thread sleeping until " + DataManagement.CalculateFriday().AddDays(7).ToLocalTime());
-                Thread.Sleep(DataManagement.CalculateFriday().AddDays(7) - DateTime.Now);
-            }
-            if (DataManagement.CalculateFriday() > DateTime.Now)
-            {
-                SERVICES.Log.Info("Dye Thread sleeping until " + DataManagement.CalculateFriday().ToLocalTime());
-                Thread.Sleep(DataManagement.CalculateFriday() - DateTime.Now);
-            }
+            DateTime nextFriday = DataManagement.CalculateFriday();
+            DateTime nextFridayPlusWeek = nextFriday.AddDays(7);
+            DateTime now = DateTime.Now;
+            if (DataManagement.IsDyes())
+                if (nextFridayPlusWeek > now)
+                {
+                    SERVICES.Log.Info("Dye Thread sleeping until " + nextFridayPlusWeek.ToLocalTime());
+                    TimeSpan sleepTime = nextFridayPlusWeek - now;
+                    if (sleepTime.TotalMilliseconds > 0)
+                        await Task.Delay(sleepTime);
+                }
+                else if (nextFriday > now)
+                {
+                    SERVICES.Log.Info("Dye Thread sleeping until " + nextFriday.ToLocalTime());
+                    TimeSpan sleepTime = nextFriday - now;
+                    if (sleepTime.TotalMilliseconds > 0)
+                        await Task.Delay(sleepTime);
+                }
             DataManagement.ReadDataFromServer();
-            Thread.Sleep(60000);
+            await Task.Delay(60000);
         }
     }
 
@@ -124,25 +127,49 @@ public class MAINWINDOW : Window, IDisposable
     }
     */
 
-    public unsafe void GameDataReader()
+    public async Task GameDataReader()
     {
-        DataManagement.ReadDataFromServer();
-        Thread.Sleep(600000);
-        while (true)
+        Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
+        await Task.Run(async () =>
         {
-            if (DataManagement.GetCurrentWeek() == DataManagement.Week)
+            DataManagement.ReadDataFromServer();
+            await Task.Delay(10000);
+
+            while (true)
             {
-                DateTime temp = DataManagement.CalculateTuesday().AddDays(7);
-                SERVICES.Log.Info("Game reading Thread Sleeping until " + temp.ToLocalTime());
-                Thread.Sleep(temp - DateTime.Now);
-            }
-            else
-            {
-                AtkUnitBase* addon = (AtkUnitBase*)SERVICES.GameGui.GetAddonByName("FashionCheck");
-                if ((nint)addon != IntPtr.Zero)
-                    if ((((AtkUnitBase*)addon)->RootNode != null && ((AtkUnitBase*)addon)->RootNode->IsVisible()))
+                if (DataManagement.GetCurrentWeek() == DataManagement.Week)
+                {
+                    DateTime temp = DataManagement.CalculateTuesday().AddDays(7);
+                    TimeSpan sleepTime = temp - DateTime.Now;
+                    SERVICES.Log.Info("Game reading Thread Sleeping until " + temp.ToLocalTime());
+                    if (sleepTime.TotalMilliseconds > 0)
+                        await Task.Delay(sleepTime);
+                }
+                else
+                {
+                    if (IsFashionCheckVisible())
                         DataManagement.ReadDataFromGame();
-                Thread.Sleep(5000);
+                    await Task.Delay(5000);
+                }
+            }
+        });
+    }
+
+    private bool IsFashionCheckVisible()
+    {
+        unsafe
+        {
+            try
+            {
+                nint ptr = (nint)SERVICES.GameGui.GetAddonByName("FashionCheck");
+                if (ptr == IntPtr.Zero)
+                    return false;
+                AtkUnitBase* addon = (AtkUnitBase*)ptr;
+                return addon->RootNode != null && addon->RootNode->IsVisible();
+            }
+            catch
+            {
+                return false;
             }
         }
     }
