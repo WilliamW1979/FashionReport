@@ -4,6 +4,7 @@ using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using MySql.Data.MySqlClient;
 using System;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
@@ -56,11 +57,7 @@ namespace FashionReport
             return utcNow >= lastTuesday ? lastTuesday : lastTuesday.AddDays(-7);
         }
 
-        public int GetCurrentWeek()
-        {
-            DateTime beginning = new DateTime(2018, 1, 23, 7, 0, 0);
-            return (int)((DateTime.Now - beginning).TotalDays / 7);
-        }
+        public int GetCurrentWeek() => (int)((DateTime.UtcNow - new DateTime(2018, 1, 23, 8, 0, 0, DateTimeKind.Utc)).TotalDays / 7);
 
         private string GetConnectionString()
         {
@@ -100,28 +97,27 @@ namespace FashionReport
 
         public unsafe bool ReadDataFromGame()
         {
-            if (Week == (uint)GetCurrentWeek()) return false;
-            AtkUnitBase* addon = (AtkUnitBase*)SERVICES.GameGui.GetAddonByName("FashionCheck");
-            if ((nint)addon == IntPtr.Zero || !addon->RootNode->IsVisible()) return false;
+            if (Week == (uint)GetCurrentWeek() || !IsFashionCheckVisible()) return false;
             SortedList<string, string> slotThemes2 = new SortedList<string, string>();
+            nint ptr = (nint)SERVICES.GameGui.GetAddonByName("FashionCheck");
+            if (ptr == IntPtr.Zero) return false;
+            AtkUnitBase* addon = (AtkUnitBase*)ptr;
             string weeklyTheme2 = MemoryHelper.ReadSeStringNullTerminated((nint)(void*)addon->AtkValues[0].String).ToString() ?? string.Empty;
-            if (weeklyTheme2 == WeeklyTheme)
+            if (weeklyTheme2 == string.Empty) return false;
+            else if (weeklyTheme2 == WeeklyTheme)
             {
+                SERVICES.Log.Info("Current!");
                 Week = (uint)GetCurrentWeek();
-                return false;
+                return true;
             }
-
             for (int count = 0; count < Slots.Length; count++)
                 slotThemes2[Slots[count]] = MemoryHelper.ReadSeStringNullTerminated((nint)(void*)addon->AtkValues[2 + (11 * count)].String).TextValue ?? string.Empty;
-
+            WriteDataToServer();
             try
             {
                 using (MySqlConnection connection = new MySqlConnection(GetConnectionString()))
                 {
                     connection.Open();
-                    string cmdstr = BuildInsertCommand(weeklyTheme2, slotThemes2);
-                    ExecuteInsertCommand(connection, cmdstr);
-
                     foreach (string slot in Slots)
                     {
                         if (slotThemes2.TryGetValue(slot, out string? theme) && !string.IsNullOrEmpty(theme))
@@ -133,7 +129,6 @@ namespace FashionReport
                                     SlotData[slot] = reader["Gears"]?.ToString() ?? string.Empty;
                         }
                     }
-
                     Week = (uint)GetCurrentWeek();
                     WeeklyTheme = weeklyTheme2;
                     SlotThemes = slotThemes2;
@@ -145,8 +140,23 @@ namespace FashionReport
             {
                 SERVICES.Log.Info(ex.ToString());
             }
-
             return true;
+        }
+
+        private unsafe bool IsFashionCheckVisible()
+        {
+            try
+            {
+                nint ptr = (nint)SERVICES.GameGui.GetAddonByName("FashionCheck");
+                if (ptr == IntPtr.Zero)
+                    return false;
+                AtkUnitBase* addon = (AtkUnitBase*)ptr;
+                return addon->RootNode != null && addon->RootNode->IsVisible();
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public void ReadDataFromServer()
@@ -162,10 +172,12 @@ namespace FashionReport
                         connection.Dispose();
                         return;
                     }
-                    string sCommand = "SELECT * FROM FashionReport ORDER BY Week DESC LIMIT 1";
-                    if(connection.State == ConnectionState.Open)
-                        using (MySqlCommand command = new MySqlCommand(sCommand, connection))
+                    if (connection.State == ConnectionState.Open)
+                    {
+                        using (MySqlCommand command = new MySqlCommand("SELECT * FROM FashionReport ORDER BY Week DESC LIMIT 1", connection))
+                        {
                             using (MySqlDataReader reader = command.ExecuteReader())
+                            {
                                 if (reader.Read())
                                 {
                                     Week = reader.GetUInt32("Week");
@@ -177,15 +189,30 @@ namespace FashionReport
                                         if (reader[dye] is string dyeData && !string.IsNullOrEmpty(dyeData))
                                             SlotDyes[dye.Replace("Dye", "")] = GetDyeInfo(dyeData);
                                 }
+                            }
+                        }
+                        foreach (string slot in Slots)
+                        {
+                            if (SlotThemes.TryGetValue(slot, out string? Theme) && !string.IsNullOrEmpty(Theme))
+                            {
+                                using (MySqlCommand command = new MySqlCommand("SELECT Gears FROM SlotThemes WHERE Theme=@Theme", connection))
+                                {
+                                    command.Parameters.AddWithValue("@Theme", Theme);
+                                    using (MySqlDataReader reader = command.ExecuteReader())
+                                    {
+                                        if (reader.Read())
+                                            SlotData[slot] = reader["Gears"]?.ToString() ?? string.Empty;
+                                    }
+                                }
+                            }
+                        }
+                        Save();
+                    }
                 }
             }
             catch (Exception ex)
             {
-                try
-                {
-                    SERVICES.Log.Info(ex.ToString());
-                }
-                catch { }
+                SERVICES.Log.Info(ex.ToString());
             }
         }
 

@@ -10,6 +10,10 @@
 
   <ItemGroup>
     <Compile Remove="Configuration.cs" />
+    <Compile Remove="DataManagement.cs" />
+    <Compile Remove="DyeWindow.cs" />
+    <Compile Remove="GearManager.cs" />
+    <Compile Remove="Help.cs" />
     <Compile Remove="Log.cs" />
     <Compile Remove="Week.cs" />
   </ItemGroup>
@@ -28,7 +32,6 @@
 
   <ItemGroup>
     <PackageReference Include="MySql.Data" Version="9.2.0" />
-    <PackageReference Include="StbImageSharp" Version="2.30.15" />
   </ItemGroup>
 
   <ItemGroup>

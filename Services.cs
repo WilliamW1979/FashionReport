@@ -1,10 +1,6 @@
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
-using Lumina.Excel.Sheets;
 
 namespace FashionReport
 {
@@ -24,10 +20,5 @@ namespace FashionReport
         [PluginService] public static ITextureProvider TextureProvider { get; private set; } = null!;
         [PluginService] public static IPluginLog Log { get; private set; } = null!;
         [PluginService] public static IGameInventory GameInventory { get; private set; } = null!;
-
-        public static readonly string[] FRSlots = { "Weapon", "Head", "Body", "Gloves", "Legs", "Boots", "Earrings", "Necklace", "Bracelet", "RightRing", "LeftRing" };
-        public static List<Item> AllItems = null!;
-        public static WeeklyFashionReportData FRData  = null!;
-        public static EquippedGearService Equipment = null!;
     }
 }

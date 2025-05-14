@@ -1,40 +1,33 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Dalamud.Game.Command;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin;
-using Lumina.Excel.Sheets;
+#pragma warning disable IDE1006
 
 namespace FashionReport;
 
 public sealed class FASHIONREPORT : IDalamudPlugin
 {
     public readonly WindowSystem WindowSystem = new("Fashion Report");
-    private MAINWINDOW MainWindow { get; init; } = new();
-    private FashionCheckDetector? FashionCheckDetector;
+    public DATAMANAGEMENT DataManagement { get; set; } = null!;
+    private MAINWINDOW MainWindow { get; init; }
 
     public FASHIONREPORT(IDalamudPluginInterface pluginInterface)
     {
         pluginInterface.Create<SERVICES>();
+        DATAMANAGEMENT.Load();
+        MainWindow = new MAINWINDOW(this);
+
         WindowSystem.AddWindow(MainWindow);
-        SERVICES.FRData = new();
-        SERVICES.Equipment = new();
+
+#pragma warning disable CS8602
         SERVICES.CommandManager.AddHandler("/fr", new CommandInfo(OnCommand) { HelpMessage = "Fashion Report calculator!" });
         SERVICES.CommandManager.AddHandler("/fashionreport", new CommandInfo(OnCommand) { HelpMessage = "Fashion Report calculator!" });
         SERVICES.Interface.UiBuilder.Draw += DrawUI;
         SERVICES.Interface.UiBuilder.OpenMainUi += ToggleMainUI;
-        SERVICES.AllItems = SERVICES.DataManager.GetExcelSheet<Item>()?.ToList() ?? new List<Item>();
-        FashionCheckDetector = new();
-        if (SERVICES.FRData.StoredWeek == 0)
-        {;
-            WeeklyFashionReportData? data = FashionCheckDetector.GetServerData();
-            if (data != null)
-                SERVICES.FRData = data;
-        }
+#pragma warning restore CS8602
 
+        GEARMANAGER.Generate();
+        DATAMANAGEMENT.Load();
     }
 
     public void Dispose()
@@ -43,7 +36,6 @@ public sealed class FASHIONREPORT : IDalamudPlugin
         MainWindow.Dispose();
         SERVICES.CommandManager.RemoveHandler("/fr");
         SERVICES.CommandManager.RemoveHandler("/fashionreport");
-        FashionCheckDetector?.Dispose();
     }
 
     private void OnCommand(string command, string args) => ToggleMainUI();
